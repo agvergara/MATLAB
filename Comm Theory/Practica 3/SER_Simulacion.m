@@ -3,7 +3,7 @@ close all
 L = 10000; % Número de símbolos en la simulación
 M = 8; % Constelacion PAM de M simbolos
 k = log2(M); % Número de bits por símbolo
-
+% An = [-7, -5, -3, -1, 1, 3, 5, 7]
 Eb = 7; % Valor de Eb en unidades naturales (calculado de forma teórica en el Hito3.1.)
 Eb_dB = 10*log10(Eb); % Valor de Eb en dB
 
