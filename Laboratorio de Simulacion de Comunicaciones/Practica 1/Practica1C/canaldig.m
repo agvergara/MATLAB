@@ -17,7 +17,7 @@ Biny = Binx;
 while contador <= Nbe
    rnd = rand(1);
    if round(rnd)
-       Biny(i) = Biny(i) * rnd;
+       Biny(i) = Biny(i) + round(rnd);
        contador = contador + 1;
    end
    i = i + 1;

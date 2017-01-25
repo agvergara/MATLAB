@@ -1,6 +1,5 @@
-function Qx = cuantif(signal, fescala, nivcuant);
-    % Para hallar el tamaño de la particion, tendremos que calcular cuanto vale
-    % el tamaño del escalon
+function Qx = cuantif(signal, fescala, nivcuant)
+    % Para hallar el tamaño de la particion, tendremos que calcular cuanto dura el escalon
     A = 2 * fescala / nivcuant;
     % Calculamos los valores del eje X para los que habrá una subida/bajada del
     % escalon
