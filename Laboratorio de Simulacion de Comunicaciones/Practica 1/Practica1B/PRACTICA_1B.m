@@ -5,7 +5,6 @@
 % ***********************************************************
 clear all
 clc
-p = input('Periodos de la sinusoide: ');
 s = input('Escala de graficas espectrales (lin/log): ', 's');
 
 fc = 1000000; %Hz
@@ -20,7 +19,7 @@ Z = 50; %Ohm
 
 %% 1.- Generamos la señal
 % Eje de tiempos
-t = [0:1/fm:p*(1/fc)];
+t = [0:1/fm:(N-1)*(1/fm)];
 % Señal
 x = (Ac/2)*sin(2*pi*fc*t);
 % Señal a la entrada del recortador (espectro y señal)
@@ -59,15 +58,13 @@ plot(W, abs(H))
 grid on
 title('Funcion de transferencia del filtro')
 % Hallamos la señal filtrada
-XG = fft(xg);
-Y = filter(B, A, XG, [], 1);
-y = ifft(Y);
+y = filter(B, A, xg);
 figure
 plot(t,y)
 grid on
 title('Señal filtrada')
 figure
-y = spectrum(y,(1/fm),Z, 'Espectro de la señal filtrada', s); 
+y = spectrum(y,(1/fm),Z, 'Espectro de la señal filtrada', s);
 
 %% 5.- Diagrama de polos y ceros
 polozero(B, A)

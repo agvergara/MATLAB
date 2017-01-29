@@ -31,14 +31,14 @@ NE=2^b; % Número de escalones
 % Señal de entrada:
 % -----------------
 %
-% f1=20; % Frecuencia del tono 2.
+s = input('Escala de graficas espectrales (lin/log): ', 's');
+ %f1=20; % Frecuencia del tono 2.
 % x=Ap*cos(2*pi*f0*t)+Ap*cos(2*pi*f1*t);
 x=Ap*cos(2*pi*f0*t);
 %% Señal cuantificada:
 % -------------------
 %
 Qx=cuantif(x,FE,NE);
-%sig = sawtooth(t));
 %% Señal codificada en binario 4 bits:
 % -----------------------------------
 %
@@ -47,7 +47,7 @@ Binx=decabin(Qx,FE,b);
 % ----------------------------
 %
 BER=input('Tasa de error, BER:'); % En tanto por uno
-Biny=canaldig(Binx, BER);
+[Biny, cherror]=canaldig(Binx, BER);
 %% Señales con y sin errores pasadas a decimal:
 % --------------------------------------------
 %
@@ -57,19 +57,57 @@ Decixbien=binadec(Binx,FE,b);
 % ----------------------------------------------
 %
 % Utilizar las funciones butter y filter
-%
+% Orden? Impedancia en los espectros?
+% [B,A] = butter(7, (bw/(fm/2)), 'low');
+% Deciybien = filter(B, A, Decixbien);
+% Deciymal = filter(B, A, Decixmal);
 %% Representaciones gráficas. Al menos deben aparecer las siguientes:
 % ------------------------------------------------------------------
 %
 % 1. Señal cuantificada
 plot(t, Qx)
-% 2. Errores introducidos por el canal. Se calcula haciendo la or-exclusiva
+grid on
+title ('Señal cuantificada')
+%% 2. Errores introducidos por el canal. Se calcula haciendo la or-exclusiva
 % entre la señal a su entrada y la señal a su salida
-% 3. Señal decimal sin errores en el receptor
-% 4. Señal decimal con errores en el receptor
-% 5. Densidad espectral de potencia de la señal 3
-% 6. Densidad espectral de potencia de la señal 4
-% 7. Señal sin errores después del filtro
-% 8. Señal con errores después del filtro
-% 9.....otras (a criterio del alumno)
+error = bitxor(Binx, Biny);
+%% 3. Señal decimal sin errores en el receptor
+figure
+plot(t, Decixbien)
+grid on
+title ('Señal decimal sin errores')
+%% 4. Señal decimal con errores en el receptor
+figure
+plot(t, Decixmal)
+grid on
+title ('Señal decimal con errores')
+%% 5. Densidad espectral de potencia de la señal 3
+figure
+spectrum(Decixbien, (1/fs), 50, 'D.E.P de señal decimal sin errores', s);
+%% 6. Densidad espectral de potencia de la señal 4
+figure
+spectrum(Decixmal, (1/fs), 50, 'D.E.P de señal decimal con errores', s);
+%% 7. Señal sin errores después del filtro
+figure
+plot(t, Deciybien)
+grid on
+title ('Señal decimal sin errores filtrada LP')
+%% 8. Señal con errores después del filtro
+figure
+plot(t, Deciymal)
+grid onm 
+title ('Señal decimal con errores filtrada LP')
+%% 9.....otras (a criterio del alumno)
+%Para observar que 
+%Decixbien y Qx deberían ser iguales o realmente aproximadas
+figure
+spectrum(Qx, (1/fs), 50, 'D.E.P de señal cuantificada', s); 
+% Comparacion entre señales de error generada por el canal y la calculada
+% en el punto 2
+figure
+subplot(2, 1, 1)
+spectrum(cherror, (1/fs), 50, 'Señal de error generada', s);
+subplot(2, 1, 2)
+spectrum(error, (1/fs), 50, 'Señal de error calculada', s);
+%%
 end
