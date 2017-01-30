@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 function Binx = decabin(Qx, ~, b)
+=======
+function Binx = decabin(Qx, FE, b);
+    contador = 1;
+>>>>>>> origin/master
     j = 1;
     aux = [0 0 0 0];
     % Esta parte de la funcion nos devuelve:
@@ -7,6 +12,7 @@ function Binx = decabin(Qx, ~, b)
     % abajo
     for i = 1:length(Qx)
         aux2 = Qx(i);
+<<<<<<< HEAD
         % Obtenemos el signo del número y llamamos a la función 'bin'
         if Qx(i) > 0
             aux(1) = 1;
@@ -17,10 +23,20 @@ function Binx = decabin(Qx, ~, b)
         end
         % Añadimos los bits necesarios para codificar el número Qx(i) a la
         % señal de salida Binx
+=======
+        if Qx(i) > 0
+            aux = bin(aux, b, contador, i, aux2);
+        else
+           aux(1) = 1;
+           aux2 = aux2*(-1);
+           aux = bin(aux, b, contador, i, aux2);
+        end
+>>>>>>> origin/master
         for w = 1:length(aux)
             Binx(j) = aux(w);
             j = length(Binx) + 1;
         end
+<<<<<<< HEAD
         aux = [0 0 0 0];
     end
     
@@ -45,5 +61,24 @@ function Binx = decabin(Qx, ~, b)
                 aux(k) = 0;
             end
          end
+=======
+        contador = 1;
+    end
+    
+    % Funcion que calcula el numero binario de un numero decimal
+    function aux = bin(aux, b, contador, i, aux2);
+         while (contador+1) <= b
+                aux2 = aux2 * 2;
+                if aux2 == 1
+                    aux(contador) = 1;
+                elseif aux2 > 1
+                    aux(contador) = 1;
+                    aux2 = aux2 - 1;
+                else
+                    aux(contador) = 0;
+                end
+                contador = contador + 1;
+            end
+>>>>>>> origin/master
     end
 end
