@@ -31,7 +31,6 @@ NE=2^b; % Número de escalones
 % Señal de entrada:
 % -----------------
 %
-s = input('Escala de graficas espectrales (lin/log): ', 's');
  %f1=20; % Frecuencia del tono 2.
 % x=Ap*cos(2*pi*f0*t)+Ap*cos(2*pi*f1*t);
 x=Ap*cos(2*pi*f0*t);
@@ -57,15 +56,15 @@ Decixbien=binadec(Binx,FE,b);
 % ----------------------------------------------
 %
 % Utilizar las funciones butter y filter
-% Orden? Impedancia en los espectros?
-% [B,A] = butter(7, (bw/(fm/2)), 'low');
-% Deciybien = filter(B, A, Decixbien);
-% Deciymal = filter(B, A, Decixmal);
+% Frecuencia de corte de 32 Hz a la mitad de la frecuencia de muestreo
+[B,A] = butter(7, (32/(fs/2)), 'low');
+Deciybien = filter(B, A, Decixbien);
+Deciymal = filter(B, A, Decixmal);
 %% Representaciones gráficas. Al menos deben aparecer las siguientes:
 % ------------------------------------------------------------------
 %
 % 1. Señal cuantificada
-plot(t, Qx)
+plot(t, Qx,'b-')
 grid on
 title ('Señal cuantificada')
 %% 2. Errores introducidos por el canal. Se calcula haciendo la or-exclusiva
@@ -73,41 +72,71 @@ title ('Señal cuantificada')
 error = bitxor(Binx, Biny);
 %% 3. Señal decimal sin errores en el receptor
 figure
-plot(t, Decixbien)
+plot(t, Decixbien,'b-')
 grid on
 title ('Señal decimal sin errores')
 %% 4. Señal decimal con errores en el receptor
 figure
-plot(t, Decixmal)
+plot(t, Decixmal,'b-')
 grid on
 title ('Señal decimal con errores')
 %% 5. Densidad espectral de potencia de la señal 3
+% Periodogram calcula una estimación de la D.E.P de la señal con una
+% ventana rectangular de tamaño la longitud de la señal.
 figure
-spectrum(Decixbien, (1/fs), 50, 'D.E.P de señal decimal sin errores', s);
+[Pxxbien, Wbien] = periodogram(Decixbien,rectwin(length(Decixbien)),length(Decixbien),fs);
+plot(Wbien, Pxxbien,'b-')
+grid on
+title ('Densidad espectral de potencia de la señal sin errores')
+xlabel('Frecuencia')
+ylabel('Densidad espectral de potencia')
 %% 6. Densidad espectral de potencia de la señal 4
 figure
-spectrum(Decixmal, (1/fs), 50, 'D.E.P de señal decimal con errores', s);
+[Pxxmal, Wmal] = periodogram(Decixmal,rectwin(length(Decixmal)),length(Decixmal),fs);
+plot(Wmal, Pxxmal,'b-')
+grid on
+title ('Densidad espectral de potencia de la señal con errores')
+xlabel('Frecuencia')
+ylabel('Densidad espectral de potencia')
 %% 7. Señal sin errores después del filtro
 figure
-plot(t, Deciybien)
+plot(t, Deciybien,'b-')
 grid on
 title ('Señal decimal sin errores filtrada LP')
 %% 8. Señal con errores después del filtro
 figure
-plot(t, Deciymal)
-grid onm 
+plot(t, Deciymal,'b-')
+grid on 
 title ('Señal decimal con errores filtrada LP')
 %% 9.....otras (a criterio del alumno)
-%Para observar que 
+%Para observar que las D.E.P de
 %Decixbien y Qx deberían ser iguales o realmente aproximadas
 figure
-spectrum(Qx, (1/fs), 50, 'D.E.P de señal cuantificada', s); 
+[Pxqx, Wqx] = periodogram(Qx,rectwin(length(Qx)),length(Qx),fs);
+plot(Wqx, Pxqx, 'b-')
+grid on
+title ('Densidad espectral de potencia de la señal cuantificada')
+xlabel('Frecuencia')
+ylabel('Densidad espectral de potencia')
 % Comparacion entre señales de error generada por el canal y la calculada
 % en el punto 2
+% Siendo "cherror" el vector de error producido por el canal digital y
+% "error" el vector de error calculado
 figure
+title('D.E.P de los errores')
 subplot(2, 1, 1)
-spectrum(cherror, (1/fs), 50, 'Señal de error generada', s);
+[Pxche, Wche] = periodogram(cherror,rectwin(length(cherror)),length(cherror),fs);
+plot(Wche, Pxche, 'r-')
 subplot(2, 1, 2)
-spectrum(error, (1/fs), 50, 'Señal de error calculada', s);
-%%
-end
+[Pxerr, Werr] = periodogram(error,rectwin(length(error)),length(error),fs);
+plot(Werr, Pxerr, 'b-')
+grid on
+% Comparación entre las señales Deciymal y Deciybien para ver los efectos
+% del canal digital y cómo el filtro recupera gran parte de la señal
+figure
+plot(t, Deciybien, 'r-', 'LineWidth', 2)
+hold on
+plot(t, Deciymal, 'b-', 'LineWidth', 2)
+legend('Deciybien', 'Deciymal')
+title('Señales obtenidas a la salida del filtro con y sin errores')
+grid on
