@@ -1,2 +1,2 @@
 # MATLAB
-Some Matlab programs
+Some Matlab scripts.
