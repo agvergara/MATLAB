@@ -123,14 +123,16 @@ ylabel('Densidad espectral de potencia')
 % Siendo "cherror" el vector de error producido por el canal digital y
 % "error" el vector de error calculado
 figure
-title('D.E.P de los errores')
 subplot(2, 1, 1)
+grid on
 [Pxche, Wche] = periodogram(cherror,rectwin(length(cherror)),length(cherror),fs);
 plot(Wche, Pxche, 'r-')
 subplot(2, 1, 2)
+grid on
 [Pxerr, Werr] = periodogram(error,rectwin(length(error)),length(error),fs);
 plot(Werr, Pxerr, 'b-')
-grid on
+title ('D.E.P de los errores')
+
 % Comparación entre las señales Deciymal y Deciybien para ver los efectos
 % del canal digital y cómo el filtro recupera gran parte de la señal
 figure
@@ -140,3 +142,9 @@ plot(t, Deciymal, 'b-', 'LineWidth', 2)
 legend('Deciybien', 'Deciymal')
 title('Señales obtenidas a la salida del filtro con y sin errores')
 grid on
+% Señal rampa para comprobar el cuantificador
+figure
+m = -1:1/fs:1;
+plot(m, cuantif(m, FE, NE))
+grid on
+title('Señal rampa')
