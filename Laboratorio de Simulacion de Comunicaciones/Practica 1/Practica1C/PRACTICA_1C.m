@@ -37,11 +37,11 @@ x=Ap*cos(2*pi*f0*t);
 %% Señal cuantificada:
 % -------------------
 %
-Qx=cuantif(x,FE,NE);
+[INDEX, Qx]=cuantif(x,FE,NE);
 %% Señal codificada en binario 4 bits:
 % -----------------------------------
 %
-Binx=decabin(Qx,FE,b);
+Binx=decabin(Qx,FE,b,INDEX);
 %% Señal a la salida del canal:
 % ----------------------------
 %
@@ -50,8 +50,8 @@ BER=input('Tasa de error, BER:'); % En tanto por uno
 %% Señales con y sin errores pasadas a decimal:
 % --------------------------------------------
 %
-Decixmal=binadec(Biny,FE,b);
-Decixbien=binadec(Binx,FE,b);
+Decixmal=binadec(Biny,FE,b,NE);
+Decixbien=binadec(Binx,FE,b,NE);
 %% Señales con y sin errores filtradas paso bajo:
 % ----------------------------------------------
 %
@@ -133,7 +133,7 @@ grid on
 plot(Werr, Pxerr, 'b-')
 title ('D.E.P de los errores')
 
-% Comparación entre las señales Deciymal y Deciybien para ver los efectos
+%% Comparación entre las señales Deciymal y Deciybien para ver los efectos
 % del canal digital y cómo el filtro recupera gran parte de la señal
 figure
 plot(t, Deciybien, 'r-', 'LineWidth', 2)
@@ -142,7 +142,7 @@ plot(t, Deciymal, 'b-', 'LineWidth', 2)
 legend('Deciybien', 'Deciymal')
 title('Señales obtenidas a la salida del filtro con y sin errores')
 grid on
-% Señal rampa para comprobar el cuantificador
+%% Señal rampa para comprobar el cuantificador
 figure
 m = -1:1/fs:1;
 plot(m, cuantif(m, FE, NE))

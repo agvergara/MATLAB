@@ -1,4 +1,4 @@
-function Qx = cuantif(signal, fescala, nivcuant)
+function [INDEX, Qx] = cuantif(signal, fescala, nivcuant)
     % Para hallar el tamaño de la particion, tendremos que el valor del
     % escalón
     A = 2*fescala/nivcuant;
@@ -8,5 +8,5 @@ function Qx = cuantif(signal, fescala, nivcuant)
     % escalón y, a su vez, quitamos el offset para cuadrarlo en 0
     codebook = [-fescala+(A/2):A:fescala];
     % Y podemos cuantificar la señal
-    [~,Qx] = quantiz(signal,partition,codebook);
+    [INDEX,Qx] = quantiz(signal,partition,codebook);
 end
