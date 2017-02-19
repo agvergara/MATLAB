@@ -7,6 +7,9 @@ close all
 clc
 %Parámetros para la simulación
 simb = 1000;
+Fd = 1;
+Fs = 10; %10 HZ de frecuencia de muestreo
+N = Fs/Fd; %
 rolloff = 0.5;
 Mmod = [2 4 8 64]; % Orden de modulaciones
 sps = [log2(2) log2(4) log2(8) log2(64)]; % Muestras por símbolo
@@ -23,23 +26,23 @@ titlesSNRqam = char({'64QAM - SNR 3dB'; '64QAM - SNR 10dB'; '64QAM - SNR 20dB'})
 %utilizada para más adelante dibujar la constelacion.
     %% BPSK
         data= randi([0 1], simb*sps(1), 1);
-        [signal1, span(1), mod(1)] = modular(Mmod(1), data, sps(1), rolloff);
-        y = eyediagram(signal1, round(span(1))); %Representamos los diagramas de ojo
+        [signal1, mod(1)] = modular(Mmod(1), data, rolloff, Fd, Fs);
+        y = eyediagram(signal1, N, 1/Fd); %Representamos los diagramas de ojo
         set(y,'Name',titles(1, :));
     %% QPSK
         data= randi([0 1], simb*sps(2), 1);
-        [signal2, span(2), mod(2)] = modular(Mmod(2), data, sps(2), rolloff);
-        y = eyediagram(signal2, round(span(2))); %Representamos los diagramas de ojo
+        [signal2, mod(2)] = modular(Mmod(2), data, rolloff, Fd, Fs);
+        y = eyediagram(signal2, N, 1/Fd); %Representamos los diagramas de ojo
         set(y,'Name',titles(2, :));
     %% 8PSK
         data= randi([0 1], simb*sps(3), 1);
-        [signal3, span(3), mod(3)] = modular(Mmod(3), data, sps(1), rolloff);
-        y = eyediagram(signal3, round(span(3))); %Representamos los diagramas de ojo
+        [signal3, mod(3)] = modular(Mmod(3), data, rolloff, Fd, Fs);
+        y = eyediagram(signal3, N, 1/Fd); %Representamos los diagramas de ojo
         set(y,'Name',titles(3, :));
     %% 64QAM
         data= randi([0 1], simb*sps(4), 1);
-        [signal4, span(4), mod(4)] = modular(Mmod(4), data, sps(1), rolloff);
-        y = eyediagram(signal4, round(span(4))); %Representamos los diagramas de ojo
+        [signal4, mod(4)] = modular(Mmod(4), data, rolloff, Fd, Fs);
+        y = eyediagram(signal4, N, 1/Fd); %Representamos los diagramas de ojo
         set(y,'Name',titles(4, :));
 
 %% Parte 2A.2
@@ -48,23 +51,62 @@ titlesSNRqam = char({'64QAM - SNR 3dB'; '64QAM - SNR 10dB'; '64QAM - SNR 20dB'})
 %señal de entrada con una SNR dada en dB y suponiendo una potencia de
 %transmisión de 1W.
 SNR = [3 10 20]; %SNR a utilizar, en dB
+databpsk = randi([0 1], simb*sps(1), 1); %Generacion de los datos para BPSK
 dataqpsk = randi([0 1], simb*sps(2), 1); %Generacion de los datos para QPSK
+data8psk = randi([0 1], simb*sps(3), 1); %Generacion de los datos para 8PSK
 data64qam = randi([0 1], simb*sps(4), 1); %Generacion de los datos para 64QAM
-[signalqpsk, spanqpsk, modqpsk] = modular(4, dataqpsk, sps(2), rolloff); %Modulacion QPSK
-[signal64qam, spanqam, modqam] = modular(64, data64qam, sps(4), rolloff); % Modulacion 64QAM
+[signalbpsk, modbpsk] = modular(2, databpsk,  rolloff, Fd, Fs); %Modulacion BPSK
+[signalqpsk, modqpsk] = modular(4, dataqpsk,  rolloff, Fd, Fs); %Modulacion QPSK
+[signal8psk, mod8psk] = modular(8, data8psk,  rolloff, Fd, Fs); %Modulacion 8PSK
+[signal64qam, modqam] = modular(64, data64qam,  rolloff, Fd, Fs); % Modulacion 64QAM
 for i=1:length(SNR)
-   datanoiseqpsk(i, :) = awgn(signalqpsk, SNR(i)); %Añadimos ruido AWGN a QPSK
+   snr = 10.^(SNR(i)/10);
+   w = (randn(length(signalqpsk),1) + 1i.*randn(length(signalqpsk),1)) * (1/sqrt(2)) * sqrt(1/snr);
+   y(i, :) = signalqpsk + w;
+   datanoisebpsk(i, :) = awgn(signalbpsk, SNR(i)); %Añadimos ruido AWGN a BPSK
+   datanoiseqpsk(i, :) = awgn(signalqpsk, SNR(i)); %Añadimos ruido AWGN a BPSK
+   datanoise8psk(i, :) = awgn(signal8psk, SNR(i)); %Añadimos ruido AWGN a QPSK
    datanoise64qam(i, :) = awgn(signal64qam, SNR(i)); %Añadimos ruido AWGN a 64QAM
-   y1 = eyediagram(datanoiseqpsk(i, :), round(spanqpsk)); %Representamos los diagramas de ojo
+   y1 = eyediagram(datanoiseqpsk(i, :), N, 1/Fd); %Representamos los diagramas de ojo
    set(y1,'Name',titlesSNRpsk(i, :));
-   y2 = eyediagram(datanoise64qam(i, :), round(spanqam)); %Representamos los diagramas de ojo
+   y2 = eyediagram(datanoise64qam(i, :), N, 1/Fd); %Representamos los diagramas de ojo
    set(y2,'Name',titlesSNRqam(i, :));
 end
-
 %% Parte 2A.3
-
+%Las señalse con ruido se obtuvieron en el apartado anterior, simplemente
+%se realiza el scatterplot
+scatterplot(datanoisebpsk(3,:)); %constelacion BPSK con 20dB de SNR
+grid on
+title('BSPK 20dB SNR')
+scatterplot(datanoiseqpsk(3,:)); %constelacion QPSK con 20dB de SNR
+grid on
+title('QSPK 20dB SNR')
+scatterplot(datanoise8psk(3,:)); %constelacion 8PSK con 20dB de SNR
+grid on
+title('8SPK 20dB SNR')
+scatterplot(datanoise64qam(3,:)); %constelacion 64QAM con 20dB de SNR
+grid on
+title('64QAM 20dB SNR')
 %% Parte 2A.4
+taps1 = [1 0.3]; %Taps de multitrayecto 1
+taps2 = [1 -0.4 0.25]; %Taps de multitrayecto 2
+%Generamos las señales con los taps, como son simulados mediante filtros
+%IIR, no tienen coeficiente de filtro 'A' por lo que es 1, simplemente
+%tienen coeficientes 'B'
+signalmultiqpsk1 = filter(taps1, 1, signalqpsk);
+signalmulti64qam1 = filter(taps1, 1, signal64qam);
+scatterplot(signalmultiqpsk1); %constelacion QPSK con taps1 de multitrayecto
+grid on
+title('QSPK con taps [1 0.3]')
+scatterplot(signalmulti64qam1); %constelacion QPSK con taps1 de multitrayecto
+grid on
+title('64QAM con taps [1 0.3]')
+signalmultiqpsk2 = filter(taps2, 1, signalqpsk);
+signalmulti64qam2 = filter(taps2, 1, signal64qam);
+scatterplot(signalmultiqpsk2); %constelacion QPSK con taps1 de multitrayecto
+grid on
+title('QSPK con taps [1 -0.4 0.25]')
+scatterplot(signalmulti64qam2); %constelacion QPSK con taps1 de multitrayecto
+grid on
+title('64QAM con taps [1 -0.4 0.25]')
 
-% NOTA:
-% https://lost-contact.mit.edu/afs/cs.stanford.edu/pkg/matlab-r2012b/matlab/r2012b/help/comm/ug/scatter-plots.html
-% Para poner los bits a las modulaciones
