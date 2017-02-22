@@ -71,17 +71,18 @@ for i=1:length(SNR)
 end
 %% Parte 2A.3
 %Las señalse con ruido se obtuvieron en el apartado anterior, simplemente
-%se realiza el scatterplot
-scatterplot(datanoisebpsk(3,:)); %constelacion BPSK con 20dB de SNR
+%se realiza el scatterplot con 20dB de SNR
+scatterplot(datanoisebpsk(3,:)); %constelacion BPSK 
 grid on
 title('BSPK 20dB SNR')
-scatterplot(datanoiseqpsk(3,:)); %constelacion QPSK con 20dB de SNR
+hold off
+scatterplot(datanoiseqpsk(3,:)); %constelacion QPSK
 grid on
 title('QSPK 20dB SNR')
-scatterplot(datanoise8psk(3,:)); %constelacion 8PSK con 20dB de SNR
+scatterplot(datanoise8psk(3,:)); %constelacion 8PSK 
 grid on
 title('8SPK 20dB SNR')
-scatterplot(datanoise64qam(3,:)); %constelacion 64QAM con 20dB de SNR
+scatterplot(datanoise64qam(3,:)); %constelacion 64QAM
 grid on
 title('64QAM 20dB SNR')
 %% Parte 2A.4
@@ -106,4 +107,17 @@ title('QSPK con taps [1 -0.4 0.25]')
 scatterplot(signalmulti64qam2); %constelacion QPSK con taps1 de multitrayecto
 grid on
 title('64QAM con taps [1 -0.4 0.25]')
-
+%% Gráficas adicionales
+% Constelaciones BPSK, QPSK, 8PSK y 64QAM:
+scatterplot(modbpsk.constellation);
+grid on
+title('Constelación BPSK')
+scatterplot(modqpsk.constellation);
+grid on
+title('Constelación QPSK')
+scatterplot(mod8psk.constellation);
+grid on
+title('Constelación 8PSK')
+scatterplot(modqam.constellation);
+grid on
+title('Constelación 64QAM')

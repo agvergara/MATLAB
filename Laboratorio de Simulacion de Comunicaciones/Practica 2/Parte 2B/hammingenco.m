@@ -1,8 +1,9 @@
 function [BER, y, y2] = hammingenco(bits, Nb, vector_SNR, ordenmod, r)
-    [H, G, n, k] = hammgen(r);
-    Tabla_Decod = syndtable(H);
-    Ax = modem.pskmod('M',ordenmod,'SymbolOrder','gray', 'InputType', 'bit'); 
-    BER = zeros(size(vector_SNR));
+    [H, G, n, k] = hammgen(r); % Generamos la matriz generadora G y los coeficientes (n,k)
+    % dado un r. H se utiliza para hallar la tabla de síndromes que no
+    % utilizaremos en este caso.
+    Ax = modem.pskmod('M',ordenmod,'SymbolOrder','gray', 'InputType', 'bit'); % Objeto modulador
+    BER = zeros(size(vector_SNR)); %BER
     contador = 1;
     % Bucle con los valores de SNR de 0 a 10 dB
     for SNR = vector_SNR,

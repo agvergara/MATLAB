@@ -1,4 +1,5 @@
 function BER = linearrepenco(bits, Nb, vector_SNR, ordenmod, r)
+
     if r == 3
         n = 3; %Veces a repetir por k bits de informacion
         G = [1 1 1]; %Repeticion del mensaje

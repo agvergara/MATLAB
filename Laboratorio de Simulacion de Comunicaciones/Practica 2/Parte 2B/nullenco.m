@@ -1,6 +1,6 @@
 function BER = nullenco(bits, Nb, vector_SNR, ordenmod)
-    Ax = modem.pskmod('M',ordenmod,'SymbolOrder','gray', 'InputType', 'bit'); 
-    BER = zeros(size(vector_SNR));
+    Ax = modem.pskmod('M',ordenmod,'SymbolOrder','gray', 'InputType', 'bit'); % Objeto modulador
+    BER = zeros(size(vector_SNR)); %Inicializamos el vector de la BER
     contador = 1;
     for SNR = vector_SNR,
             % Modulación

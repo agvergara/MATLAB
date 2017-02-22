@@ -50,13 +50,13 @@ end
  %El canal Rayleigh sigue una distribución Gaussiana tanto en su parte real
  %como en su parte imaginaria, la suma de ambas distribuciones da como resultado 
  %una distribución Rayleigh en amplitud.
-  h = ((randn(length(modData),1) + 1i.*randn(length(modData),1))) * sqrt(1/2); %Generacion del canal Rayleigh  
-  %Multiplicamos el canal por la señal modulada.
-  doppler = modData.*h;
+ 
   for i = vector_SNR
     i
-    %Generamos el ruido
-    y = awgn(doppler, i);
+    snr = 10^(i/10);
+    
+    w = (randn(length(modData),1) + 1i.*randn(length(modData),1)) * (1/sqrt(2)) * sqrt(1/snr);
+    y = doppler + w;
     yecual = equalize(ecualizador, y, modData);
     if flag
         demodoppData = demodulate(modem.dpskdemod(mod),y); %Modulaciones DPSK
