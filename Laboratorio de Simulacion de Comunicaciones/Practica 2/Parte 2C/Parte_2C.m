@@ -3,9 +3,9 @@
 % Antonio Gomez Vergara - GIST
 % **********************************************
 clear all
-close all
+%close all
 clc
-simb = 1000;
+simb = 10^6;
 vector_SNR = (0:1:20);
 %% Parte2C.1 Modulacion QPSK para atravesar distintos canales
 Mmod = 4; %Orden de modulacion: QPSK
@@ -36,10 +36,6 @@ xlabel('SNR(dB)');
 ylabel('BER');
 hold off
 %% Parte 2C.2: SNR de 0 a 20dB usando modulaciones BPSK y DBPSK
-clear all
-clc
-simb = 1000;
-vector_SNR = (0:1:20);
 Mmod = 2;
 modbpsk = modem.pskmod('M', 2, 'SymbolOrder','gray', 'InputType', 'bit');
 moddbpsk = modem.dpskmod('M', 2, 'SymbolOrder','gray', 'InputType', 'bit');
@@ -83,4 +79,17 @@ legend ('AWGN', 'Multipath no ecualiz', 'Doppler no ecualiz', 'Multipath ecualiz
 title('Efectos del canal: DBPSK')
 xlabel('SNR(dB)');
 ylabel('BER');
+hold off
+%% Gráficas adicionales
+figure
+semilogy(vector_SNR, BERawgn, '-r')
+hold on
+semilogy(vector_SNR, BERawgnbpsk, '-b')
+hold on
+semilogy(vector_SNR, BERawgndbpsk, '-m')
+legend('QPSK', 'BPSK', 'DBPSK')
+title('Comparacion modulaciones en canal AWGN')
+xlabel('SNR(dB)')
+ylabel('BER')
+grid on
 hold off

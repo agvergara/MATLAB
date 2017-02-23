@@ -23,6 +23,11 @@ for SNR = vector_SNR,
    contador = contador + 1;  
 end
 %% Multitrayecto
+    %La forma de simular el multitrayecto es tener distintos rayos (taps),
+    %siendo el rayo con valor 1 el rayo directo y el resto los productos
+    %del multitrayecto.
+    % Después se filtra con un filtro IIR para ver su respuesta a lo largo
+    % del tiempo
     taps = [1 -0.3 0.1];
     multiqpsk = filter(taps, 1, modData);
     %Utilizamos un filtro IIR para simular el multitrayecto.
@@ -50,14 +55,13 @@ end
  %El canal Rayleigh sigue una distribución Gaussiana tanto en su parte real
  %como en su parte imaginaria, la suma de ambas distribuciones da como resultado 
  %una distribución Rayleigh en amplitud.
-  h = ((randn(length(modData),1) + 1i.*randn(length(modData),1))) * sqrt(1/2); %Generacion del canal Rayleigh  
-  %Multiplicamos el canal por la señal modulada.
-  doppler = modData.*h;
+  h = (randn(length(modData),1) + 1i.*randn(length(modData),1)) * sqrt(1/2); %Generacion del canal Rayleigh  
+  doppler = modData.*h;    %Multiplicamos el canal por la señal modulada.
   for i = vector_SNR
     i
     %Generamos el ruido
     y = awgn(doppler, i);
-    yecual = equalize(ecualizador, y, modData);
+    yecual = y./h; %Ecualizamos, es otra forma de ecualizar, pero para ver los efectos nos sirve.
     if flag
         demodoppData = demodulate(modem.dpskdemod(mod),y); %Modulaciones DPSK
         demoddopec = demodulate(modem.dpskdemod(mod),yecual); %Modulaciones DPSK
