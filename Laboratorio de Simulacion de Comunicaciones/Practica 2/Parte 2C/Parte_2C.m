@@ -5,7 +5,7 @@
 clear all
 %close all
 clc
-simb = 10^6;
+simb = input('Introduce el numero de simbolos >> ');
 vector_SNR = (0:1:20);
 %% Parte2C.1 Modulacion QPSK para atravesar distintos canales
 Mmod = 4; %Orden de modulacion: QPSK

@@ -1,9 +1,11 @@
 function [BERawgn, BERmultisinec, BERdoppsinec, BERmulticonec, BERdoppconec] = efectocanal(vector_SNR, modData, data, mod, Nb, simb, ecualizador, flag)
 % El parámetro flag se utiliza para ver si es una modulación diferenciar
 % PSK o no lo es, para la demodulación de los datos
+barra = waitbar(0, 'Calculando efecto de AWGN');
 %% AWGN
 contador = 1;
 %Simulamos un canal AWGN
+progreso = 0.0157;
 for SNR = vector_SNR,
    snr = 10^(SNR/10);
    w = (randn(length(modData),1) + 1i.*randn(length(modData),1)) * (1/sqrt(2)) * sqrt(1/snr);
@@ -20,7 +22,9 @@ for SNR = vector_SNR,
    % entonces los últimos valores serán 0 o tan proximos a 0 que Matlab no
    % los representa correctamente.
    BERawgn(contador) = sum((data~=demoData))./Nb;
-   contador = contador + 1;  
+   contador = contador + 1;
+   waitbar(progreso, barra, 'Calculando efecto de AWGN')
+   progreso = progreso + 0.0157;
 end
 %% Multitrayecto
     %La forma de simular el multitrayecto es tener distintos rayos (taps),
@@ -35,7 +39,6 @@ end
     % con los datos originales
     %Hallamos la BER comparando con los datos originales
     for i = vector_SNR
-        i
         snr = 10^(i/10);
         multiqpsk = filter(taps, 1, modData);
         w = (randn(length(modData),1) + 1i.*randn(length(modData),1)) * (1/sqrt(2)) * sqrt(1/snr);
@@ -50,6 +53,8 @@ end
         end
         BERmultisinec(i+1) = sum((data~=demomultiData))./Nb;
         BERmulticonec(i+1) = sum((data~=demomultiDataec))./Nb;
+        waitbar(progreso, barra, 'Calculando efecto de multitrayecto')
+        progreso = progreso + 0.0157;
     end
  %% Doppler con desvanecimiento Rayleigh
  %El canal Rayleigh sigue una distribución Gaussiana tanto en su parte real
@@ -58,7 +63,6 @@ end
   h = (randn(length(modData),1) + 1i.*randn(length(modData),1)) * sqrt(1/2); %Generacion del canal Rayleigh  
   doppler = modData.*h;    %Multiplicamos el canal por la señal modulada.
   for i = vector_SNR
-    i
     %Generamos el ruido
     y = awgn(doppler, i);
     yecual = y./h; %Ecualizamos, es otra forma de ecualizar, pero para ver los efectos nos sirve.
@@ -71,6 +75,8 @@ end
     end
     BERdoppsinec(i+1) = sum((data~=demodoppData))./Nb;
     BERdoppconec(i+1) = sum((data~=demoddopec))./Nb;
+    waitbar(progreso, barra, 'Calculando efecto de doppler')
+    progreso = progreso + 0.0157;
   end
-
+close(barra)
 end

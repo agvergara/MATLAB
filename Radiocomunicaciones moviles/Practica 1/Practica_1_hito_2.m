@@ -4,7 +4,7 @@
 %                Sistema con codificaci?n de canal BCH.
 % -------------------------------------------------------------------------
 
-clear all;
+% clear all;
 
 % Par?metros simulaci?n
     n = 15; % Long. palabra del c?digo BCH.
@@ -35,15 +35,15 @@ clear all;
         x = ((bits_cod-0.5).*2) * sqrt(Px); % Modulador muy sencillo BPSK. Obs?rvense las dimensiones de x.
         
         % Generaci?n de los coeficientes del canal.
-        h = (randn(size(x)) + 1i.*randn(size(x))) * sqrt(sigm_h/2); % h es Rayleigh y tiene las dimensiones de x.
+        %h = (randn(size(x)) + 1i.*randn(size(x))) * sqrt(sigm_h/2); % h es Rayleigh y tiene las dimensiones de x.
 
         % CANAL PARA EL HITO 2.3
         % Ahora asumimos que h se mantiene constante durante un bloque de
         % codificaci?n de 7 bits, es decir, en cada fila es siempre igual,
         % por lo que generamos 1 muestra de canal para cada bloque de
         % codificaci?n (cada fila) y luego repetimos esa muestra n veces.
-        % h = ( randn(length(x),1 ) + j.*randn(length(x),1 ) ) * sqrt(sigm_h/2); % Vector columna
-        % h = repmat(h, 1, n); % Matriz L*n
+         h = ( randn(length(x),1 ) + j.*randn(length(x),1 ) ) * sqrt(sigm_h/2); % Vector columna
+         h = repmat(h, 1, n); % Matriz L*n
         
         % Generaci?n del ruido
         snr = 10^(SNR/10);
@@ -63,13 +63,25 @@ clear all;
         br_dec = double(c_dec.x);
         
         % C?lculo de la BER
+        %berbch(m) = mean((br_dec(:)~=b(:)));
         ber(m) = mean((br_dec(:)~=b(:)));
-
     m=m+1;
     end
-   
+%%
 figure;    
-semilogy(vector_SNR, ber, 'r');
+semilogy(vector_SNR, berRX1, '-m');
+hold on
+semilogy(vector_SNR, berbch, '-r');
+semilogy(vector_SNR, berMRC2, '-b');
+semilogy(vector_SNR, berSC2, '-g');
+semilogy(vector_SNR, ber, '-k');
+legend ('Sin codif.', 'Codif. BCH', '2 Antenas + MRC', '2 Antenas + SC', 'Nuevo canal');
+xlabel('SNR(dB)');
+ylabel('BER');
+title('BER/SNR');
+grid on
+hold off
+
 
 % PUEDE A?ADIR AQU? EL C?DIGO DEL OTRO HITO PARA LA SIMULACI?N DEL SISTEMA SOBRE 
 % CANAL RAYLEIGH SIN CODIFICACI?N.

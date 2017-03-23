@@ -4,15 +4,15 @@
 %           Receptores con diversidad: Combinador Selectivo y 
 %                        Maximum Ratio Combining.
 % -------------------------------------------------------------------------
-clear all
-clc
+%clear all
+%clc
 % Par?metros simulaci?n
     %BER = input('Introduce la BER deseada');
    % N = 10/BER;  % Numero de s?mbolos.
     N = 10^6;
     Px = 1;   % Potencia de la se?al transmitida: normalizada
     sigm_h = 1; % Varianza del canl: normalizado.
-    vector_SNR = (0:2:20); % Relaciones se?al a ruido
+    vector_SNR = (0:1:20); % Relaciones se?al a ruido
     s1 = 1; % S?mbolos BPSK
     s2 = -1;
 
