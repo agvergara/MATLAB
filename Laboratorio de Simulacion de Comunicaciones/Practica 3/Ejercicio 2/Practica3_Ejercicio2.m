@@ -20,10 +20,10 @@ portadoras = randi(64, 1, 4); %Elegimos 4 portadoras al azar
 [simbOFDM, modData, mod, dataPar] = createOFDM(Mmod, bits, N, PC); %Creamos el símbolo OFDM
 
 %% Creamos el canal Rayleigh
-[chDoppler, ganancias] = createRaychan(ts, fd, simbOFDM, snr_media);
+[chRaygh, ganancias] = createRaychan(ts, fd, simbOFDM, snr_media);
 
 %% Realizamos el procesado del simbolo OFDM
-[dataFFT, y, BER] = processOFDM(chDoppler, PC, N, simbOFDM, modData, mod, bits, ganancias);
+[dataFFT, y, BER] = processOFDM(chRaygh, PC, N, simbOFDM, modData, mod, bits, ganancias);
 %% Con esto, obtenemos todos los datos que necesitamos para responder a las
 % 3 cuestiones que nos presenta el ejercicio:
 disp(['Para una SNR media de 10dB, la BER con canal Rayleigh es: ', num2str(BER)]);
