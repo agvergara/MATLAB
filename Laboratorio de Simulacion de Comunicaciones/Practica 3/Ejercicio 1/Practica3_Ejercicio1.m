@@ -12,7 +12,11 @@ t_disp = [0:4];
 %Generamos un canal con distribución exponencial ya que así nos aseguramos
 %que el último rayo tenga 10 veces menos potencia que el primero (suponemos
 %que el primer rayo tiene potencia unidad)
-h = exp(t_disp*(log(sqrt(Potencia_ult))/taps));
+h = (nthroot(Potencia_ult,taps)).^t_disp; %Obtenemos la raiz n-ésima (en este caso la raiz cuarta, ya que
+% es el numero de taps) para hallar
+%el valor para que el ultimo tap tenga 10 veces menos la potencia del
+%primero
+stem(t_disp, h);
 
 N = 64; %portadoras
 PC = 8; %Prefijo cíclico
@@ -25,7 +29,7 @@ bits = randi([0 1], Nb, 1);
 
 %% Creamos el canal a utilizar:
 h = h.';
-h = sqrt(1/sum(abs(h).^2))*h; % Normalizamos el canal para que la suma de las potencias (de los multitrayectos) sea unidad
+h = sqrt(1/sum(abs(h).^2))*h; % Normalizamos el canal para que la potencia sea unidad
 hMulti = filter(h,1,simbOFDM); 
 noise = sqrt(1/(2*snr_media)) * (randn(size(hMulti)) + 1i * randn(size(hMulti))); %Creamos el ruido
 
